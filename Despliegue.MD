@@ -30,7 +30,7 @@ Sin embargo, el esquema ideal para una red en producción es:
 
 - Gobernanza: La gobernanza es la base de KoreLedger, basicamente es una estructura que establece las normas, quién hace qué cosa y qué cosas se pueden hacer. Las gobernanzas tienen members, roles, schemas y policies.
 
-- Members: son los miembros que forman una gobernanza, unn nodo tiene que ser miembro de una gobernanza para poder recibir la copia de esta y ejercer cualquier rol.
+- Members: son los miembros que forman una gobernanza, un nodo tiene que ser miembro de una gobernanza para poder recibir la copia de esta y ejercer cualquier rol.
 
 - Sujetos de Trazabilidad: Los sujetos de trazabilidad son los sujetos creados en base a un schema definido en una gobernanza, aunque objetivamente una gobernanza también es un sujeto de trazabilidad, cuando hablemos de sujetos de trazabilidad nos referiremos a los creados a partir del schema de una gobernanza y no a las gobernanzas para que nos sea más fácil diferenciarlos. La relación gobernanza - sujetos de trazabilidad es una relación de uno a muchos, ya que una gobernanza puede tener "infinitos" sujetos de trazabilidad pero un sujeto de trazabilidad solo puede pertenecer a una gobernanza.
 
@@ -43,7 +43,7 @@ Sin embargo, el esquema ideal para una red en producción es:
     * Creator: Permite crear sujetos de trazabilidad a un miembro, este rol solo está disponible para los schemas.
 
 - Schema: Un schema permite crear sujetos de trazabilidad, se proporciona un Raw (el contrato en base64, el contrato de este ejemplo se encuentra en src/lib.rs) y un estado inicial para el sujeto de trazabilidad.
-- Policies: son las políticas del quorum que se tiene que cumplir para que un protocolo sea válido. Los protocolos son la evaluación, la validación y la aprobación (solo para gobernanzas), hay 3 tipos de quorum:
+- Policies: son las políticas del quorum que se tiene que cumplir para que un protocolo sea válido. Los protocolos que tienen quorum son la evaluación, la validación y la aprobación (solo para gobernanzas), hay 3 tipos de quorum:
     * Majority: La mayoría tiene que dar el visto bueno.
     * Fixed(X): donde X es la cantidad de nodos que tienen que dar el visto bueno.
     * Percentage(X): donde X es un número del 1 al 100 el cual indica el porcentaje de nodos que tiene que dar el visto bueno.
