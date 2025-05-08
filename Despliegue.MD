@@ -59,11 +59,13 @@ docker network create --driver bridge --subnet 172.28.1.0/24 kore-example-networ
 - KORE_PASSWORD: Contraseña para el material criptográfico que genera el nodo, el material es un pkcs8 cifrado con pkcs5, el material criptográfico hace que el nodo sea único en la red, si se pierde este material se pierde ese nodo para siempre, por eso es muy importante respaldar este material.
 - KORE_NETWORK_NODE_TYPE: Variable para indicar el tipo de nodo, si no se establece la variable el nodo será por defecto bootstrap.
 - KORE_NETWORK_LISTEN_ADDRESSES: variable para indicar la donde va a escuchar el nodo a otros nodos de la red.
+- KORE_HTTPS_DOC: Variable para activar la documentación, al acceder a http://localhost:3000/doc desde un navegador podrá utilizar la API del nodo con una interfaz gráfica y acceder al JSON del OpenApi desde http://localhost:3000/doc/koreapi.json
 
 Se ha mapeado los puertos 3000 para atacar la API del nodo, el 50000 para comunicaciones entre nodos y el 3050 para prometheus, además se han mapeado los volumenes de las bases de datos y el material criptográfico.
 ```bash
 docker run --name kore_example1 -p 3000:3000 -p 50000:50000 -p 3050:3050 \
 -e RUST_LOG=info \
+-e KORE_HTTPS_DOC: true \
 -e KORE_PASSWORD=koreledger \
 -e KORE_NETWORK_NODE_TYPE=Bootstrap \
 -e KORE_NETWORK_LISTEN_ADDRESSES=/ip4/0.0.0.0/tcp/50000 \

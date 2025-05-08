@@ -43,6 +43,7 @@ services:
       - "3051:3050"
     environment:
       RUST_LOG: info
+      KORE_HTTPS_DOC: true
       KORE_PASSWORD: koreledger
       KORE_NETWORK_NODE_TYPE: Addressable
       KORE_NETWORK_LISTEN_ADDRESSES: /ip4/0.0.0.0/tcp/50000
