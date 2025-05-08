@@ -1,0 +1,5 @@
+/target
+Cargo.toml
+kore_example*
+mongoo
+.DS_Store
