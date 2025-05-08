@@ -118,7 +118,7 @@ curl --silent --location 'http://localhost:3000/event-request' \
 ```bash
 {"request_id":"JWqzQ1zJ5Ds4kGeF-ZRb4Q-5WJ5RWZvC1ff1kLmpEHTg","subject_id":"JWqzQ1zJ5Ds4kGeF-ZRb4Q-5WJ5RWZvC1ff1kLmpEHTg"}
 ```
-Hemos obtenido una request_id y un subject_id (los suyos serán diferentes de los que salen en este ejemplo), este subject_id lo llamaremos governance_id a lo largo de este ejemplo.
+Hemos obtenido una request_id y un subject_id (los suyos serán diferentes de los que salen en este ejemplo), este subject_id lo llamaremos governance-id a lo largo de este ejemplo.
 
 
 ## Nodo2 - Obtener el controller_id:
@@ -132,7 +132,7 @@ curl --silent --location 'http://localhost:3001/controller-id'
 ```
 
 ## Nodo1 - Modificación de la gobernanza
-Vamos a modificar la gobernanza para añadir el schema kore-example, para que el Nodo1 se Creator e Issuer del schema kore-example y para que el Nodo2 sea testigo de esos sujetos de trazabilidad.
+Vamos a modificar la gobernanza para añadir el schema kore-example, para que el Nodo1 sea Creator e Issuer del schema kore-example y para que el Nodo2 sea testigo de esos sujetos de trazabilidad.
 ```bash
 curl --request POST 'http://127.0.0.1:3000/event-request' \
     --header 'Content-Type: application/json' \
