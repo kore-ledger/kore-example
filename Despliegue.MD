@@ -65,7 +65,7 @@ Se ha mapeado los puertos 3000 para atacar la API del nodo, el 50000 para comuni
 ```bash
 docker run --name kore_example1 -p 3000:3000 -p 50000:50000 -p 3050:3050 \
 -e RUST_LOG=info \
--e KORE_HTTPS_DOC: true \
+-e KORE_HTTPS_DOC=true \
 -e KORE_PASSWORD=koreledger \
 -e KORE_NETWORK_NODE_TYPE=Bootstrap \
 -e KORE_NETWORK_LISTEN_ADDRESSES=/ip4/0.0.0.0/tcp/50000 \
@@ -73,7 +73,7 @@ docker run --name kore_example1 -p 3000:3000 -p 50000:50000 -p 3050:3050 \
 -v ./kore_example1_keys:/keys \
 --network kore-example-network \
 --ip 172.28.1.100 \
-koreledgerhub/kore-http:0.7.0-rockdb-prometheus
+koreledgerhub/kore-http:0.7.1-rockdb-prometheus
 ```
 
 ## Nodo1 - Optener peer-id del nodo1:
@@ -225,7 +225,7 @@ curl --silent --location 'http://localhost:3000/controller-id'
 ```
 - Response:
 ```bash
-"ELJAC3vJUS1pZJ4eqyNDO0X8oNxm5wZ2_lcq39RH_9pA"
+"{{controller-id-Node1}}"
 ```
 
 ## Nodo2 - Autorización de la gobernanza
