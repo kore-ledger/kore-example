@@ -63,7 +63,7 @@ docker network create --driver bridge --subnet 172.28.1.0/24 kore-example-networ
 
 Se ha mapeado los puertos 3000 para atacar la API del nodo, el 50000 para comunicaciones entre nodos y el 3050 para prometheus, además se han mapeado los volumenes de las bases de datos y el material criptográfico.
 ```bash
-docker run --name kore_example1 -p 3000:3000 -p 50000:50000 -p 3050:3050 \
+docker run --name kore-example1 -p 3000:3000 -p 50000:50000 -p 3050:3050 \
 -e RUST_LOG=info \
 -e KORE_HTTPS_DOC=true \
 -e KORE_PASSWORD=koreledger \
@@ -72,7 +72,6 @@ docker run --name kore_example1 -p 3000:3000 -p 50000:50000 -p 3050:3050 \
 -v ./kore_example1_db:/db \
 -v ./kore_example1_keys:/keys \
 --network kore-example-network \
---ip 172.28.1.100 \
 koreledgerhub/kore-http:0.7.1-rockdb-prometheus
 ```
 

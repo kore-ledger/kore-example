@@ -47,11 +47,10 @@ services:
       KORE_PASSWORD: koreledger
       KORE_NETWORK_NODE_TYPE: Addressable
       KORE_NETWORK_LISTEN_ADDRESSES: /ip4/0.0.0.0/tcp/50000
-      KORE_NETWORK_ROUTING_BOOT_NODES: /ip4/172.28.1.100/tcp/50000/p2p/{{peer-id}}
+      KORE_NETWORK_ROUTING_BOOT_NODES: /dns4/kore-example1/tcp/50000/p2p/{{peer-id}}
       KORE_BASE_SINK: kore-example:http://172.28.1.102:5050/sink/{{subject-id}}
     volumes:
       - ./kore_example2_db:/db
       - ./kore_example2_keys:/keys
     networks:
-      kore-example-network:
-        ipv4_address: 172.28.1.103
+      - kore-example-network
