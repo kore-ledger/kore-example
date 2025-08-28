@@ -69,10 +69,11 @@ docker run --name kore-example1 -p 3000:3000 -p 50000:50000 -p 3050:3050 \
 -e KORE_PASSWORD=koreledger \
 -e KORE_NETWORK_NODE_TYPE=Bootstrap \
 -e KORE_NETWORK_LISTEN_ADDRESSES=/ip4/0.0.0.0/tcp/50000 \
+-e KORE_NETWORK_ROUTING_ALLOW_LOCAL_ADDRESS_IN_DHT=true \
 -v ./kore_example1_db:/db \
 -v ./kore_example1_keys:/keys \
 --network kore-example-network \
-koreledgerhub/kore-http:0.7.1-rockdb-prometheus
+koreledgerhub/kore-http:0.7.3-rockdb-prometheus-debug
 ```
 
 ## Nodo1 - Optener peer-id del nodo1:
@@ -129,7 +130,7 @@ curl --silent --location 'http://localhost:3001/controller-id'
 ```
 - Response:
 ```bash
-"{{controller-id-Node2}}"
+"EJ_fbFpL0yzDGmWwwIcoxEvz3Tju63SnusgaY4U72BE8"
 ```
 
 ## Nodo1 - Modificación de la gobernanza
@@ -146,7 +147,7 @@ curl --request POST 'http://127.0.0.1:3000/event-request' \
                     "add": [
                         {
                             "name": "Node2",
-                            "key": "{{controller-id-Node2}}"
+                            "key": "{{controller-id-kore-example2}}"
                         }
                     ]
                 },
@@ -156,6 +157,18 @@ curl --request POST 'http://127.0.0.1:3000/event-request' \
                             "schema_id": "kore-example",
                             "roles": {
                                 "add": {
+                                    "evaluator": [
+                                        {
+                                            "name": "Owner",
+                                            "namespace": []
+                                        }
+                                    ],
+                                    "validator": [
+                                        {
+                                            "name": "Owner",
+                                            "namespace": []
+                                        }
+                                    ],
                                     "creator": [
                                         {
                                             "name": "Owner",
@@ -184,7 +197,7 @@ curl --request POST 'http://127.0.0.1:3000/event-request' \
                     "add": [
                         {
                             "id": "kore-example",
-                            "contract": "dXNlIHNlcmRlOjp7RGVzZXJpYWxpemUsIFNlcmlhbGl6ZX07CnVzZSBrb3JlX2NvbnRyYWN0X3NkayBhcyBzZGs7CgojW2Rlcml2ZShTZXJpYWxpemUsIERlc2VyaWFsaXplLCBDbG9uZSwgRGVidWcpXQpzdHJ1Y3QgRGF0YSB7CiAgICBwdWIgdGVtcGVyYXR1cmU6IGYzMiwKICAgIHB1YiBodW1pZGl0eTogdTMyLAp9CgovLyBEZWZpbmUgdGhlIGV2ZW50cyBvZiB0aGUgY29udHJhY3QuCiNbZGVyaXZlKFNlcmlhbGl6ZSwgRGVzZXJpYWxpemUsIENsb25lKV0KZW51bSBFdmVudHMgewogICAgUmVnaXN0ZXJEYXRhIHsgdGVtcGVyYXR1cmU6IGYzMiwgaHVtaWRpdHk6IHUzMiB9LAp9CgojW3Vuc2FmZShub19tYW5nbGUpXQpwdWIgdW5zYWZlIGZuIG1haW5fZnVuY3Rpb24oc3RhdGVfcHRyOiBpMzIsIGV2ZW50X3B0cjogaTMyLCBpc19vd25lcjogaTMyKSAtPiB1MzIgewogICAgc2RrOjpleGVjdXRlX2NvbnRyYWN0KHN0YXRlX3B0ciwgZXZlbnRfcHRyLCBpc19vd25lciwgY29udHJhY3RfbG9naWMpCn0KCiNbdW5zYWZlKG5vX21hbmdsZSldCnB1YiB1bnNhZmUgZm4gaW5pdF9jaGVja19mdW5jdGlvbihzdGF0ZV9wdHI6IGkzMikgLT4gdTMyIHsKICAgIHNkazo6Y2hlY2tfaW5pdF9kYXRhKHN0YXRlX3B0ciwgaW5pdF9sb2dpYykKfQoKZm4gaW5pdF9sb2dpYyhfc3RhdGU6ICZEYXRhLCBjb250cmFjdF9yZXN1bHQ6ICZtdXQgc2RrOjpDb250cmFjdEluaXRDaGVjaykgewogICAgY29udHJhY3RfcmVzdWx0LnN1Y2Nlc3MgPSB0cnVlOwp9CgoKZm4gY29udHJhY3RfbG9naWMoCiAgICBjb250ZXh0OiAmc2RrOjpDb250ZXh0PERhdGEsIEV2ZW50cz4sCiAgICBjb250cmFjdF9yZXN1bHQ6ICZtdXQgc2RrOjpDb250cmFjdFJlc3VsdDxEYXRhPiwKKSB7CiAgICBsZXQgc3RhdGUgPSAmbXV0IGNvbnRyYWN0X3Jlc3VsdC5maW5hbF9zdGF0ZTsKICAgIG1hdGNoIGNvbnRleHQuZXZlbnQgewogICAgICAgIEV2ZW50czo6UmVnaXN0ZXJEYXRhIHsKICAgICAgICAgICAgdGVtcGVyYXR1cmUsCiAgICAgICAgICAgIGh1bWlkaXR5LAogICAgICAgIH0gPT4gewogICAgICAgICAgICBpZiB0ZW1wZXJhdHVyZSA8IC0yMF9mMzIgfHwgdGVtcGVyYXR1cmUgPiA2MF9mMzIgfHwgaHVtaWRpdHkgPiAxMDAgewogICAgICAgICAgICAgICAgcmV0dXJuOwogICAgICAgICAgICB9CiAgICAgICAgICAgIHN0YXRlLmh1bWlkaXR5ID0gaHVtaWRpdHk7CiAgICAgICAgICAgIHN0YXRlLnRlbXBlcmF0dXJlID0gdGVtcGVyYXR1cmU7CiAgICAgICAgfQogICAgfQogICAgY29udHJhY3RfcmVzdWx0LnN1Y2Nlc3MgPSB0cnVlOwp9Cg==",
+                            "contract": "dXNlIHNlcmRlOjp7RGVzZXJpYWxpemUsIFNlcmlhbGl6ZX07CnVzZSBrb3JlX2NvbnRyYWN0X3NkayBhcyBzZGs7CgojW2Rlcml2ZShTZXJpYWxpemUsIERlc2VyaWFsaXplLCBDbG9uZSwgRGVidWcpXQpzdHJ1Y3QgRGF0YSB7CiAgICBwdWIgdGVtcGVyYXR1cmU6IGYzMiwKICAgIHB1YiBodW1pZGl0eTogdTMyLAp9CgovLyBEZWZpbmUgdGhlIGV2ZW50cyBvZiB0aGUgY29udHJhY3QuCiNbZGVyaXZlKFNlcmlhbGl6ZSwgRGVzZXJpYWxpemUsIENsb25lKV0KZW51bSBFdmVudHMgewogICAgUmVnaXN0ZXJEYXRhIHsgdGVtcGVyYXR1cmU6IGYzMiwgaHVtaWRpdHk6IHUzMiB9LAp9CgojW3Vuc2FmZShub19tYW5nbGUpXQpwdWIgdW5zYWZlIGZuIG1haW5fZnVuY3Rpb24oc3RhdGVfcHRyOiBpMzIsIGluaXRfc3RhdGVfcHRyOiBpMzIsIGV2ZW50X3B0cjogaTMyLCBpc19vd25lcjogaTMyKSAtPiB1MzIgewogICAgc2RrOjpleGVjdXRlX2NvbnRyYWN0KHN0YXRlX3B0ciwgaW5pdF9zdGF0ZV9wdHIsIGV2ZW50X3B0ciwgaXNfb3duZXIsIGNvbnRyYWN0X2xvZ2ljKQp9CgojW3Vuc2FmZShub19tYW5nbGUpXQpwdWIgdW5zYWZlIGZuIGluaXRfY2hlY2tfZnVuY3Rpb24oc3RhdGVfcHRyOiBpMzIpIC0+IHUzMiB7CiAgICBzZGs6OmNoZWNrX2luaXRfZGF0YShzdGF0ZV9wdHIsIGluaXRfbG9naWMpCn0KCmZuIGluaXRfbG9naWMoX3N0YXRlOiAmRGF0YSwgY29udHJhY3RfcmVzdWx0OiAmbXV0IHNkazo6Q29udHJhY3RJbml0Q2hlY2spIHsKICAgIGNvbnRyYWN0X3Jlc3VsdC5zdWNjZXNzID0gdHJ1ZTsKfQoKCmZuIGNvbnRyYWN0X2xvZ2ljKAogICAgY29udGV4dDogJnNkazo6Q29udGV4dDxFdmVudHM+LAogICAgY29udHJhY3RfcmVzdWx0OiAmbXV0IHNkazo6Q29udHJhY3RSZXN1bHQ8RGF0YT4sCikgewogICAgbGV0IHN0YXRlID0gJm11dCBjb250cmFjdF9yZXN1bHQuc3RhdGU7CiAgICBtYXRjaCBjb250ZXh0LmV2ZW50IHsKICAgICAgICBFdmVudHM6OlJlZ2lzdGVyRGF0YSB7CiAgICAgICAgICAgIHRlbXBlcmF0dXJlLAogICAgICAgICAgICBodW1pZGl0eSwKICAgICAgICB9ID0+IHsKICAgICAgICAgICAgaWYgdGVtcGVyYXR1cmUgPCAtMjBfZjMyIHx8IHRlbXBlcmF0dXJlID4gNjBfZjMyIHx8IGh1bWlkaXR5ID4gMTAwIHsKICAgICAgICAgICAgICAgIHJldHVybjsKICAgICAgICAgICAgfQogICAgICAgICAgICBzdGF0ZS5odW1pZGl0eSA9IGh1bWlkaXR5OwogICAgICAgICAgICBzdGF0ZS50ZW1wZXJhdHVyZSA9IHRlbXBlcmF0dXJlOwogICAgICAgIH0KICAgIH0KICAgIGNvbnRyYWN0X3Jlc3VsdC5zdWNjZXNzID0gdHJ1ZTsKfQoK",
                             "initial_value": {
                                 "temperature": 0.0,
                                 "humidity": 0
@@ -232,7 +245,7 @@ En este punto el Nodo2 ya es miembro de la gobernanza, pero no tiene la copia de
 ```bash
 curl --location --request PUT '127.0.0.1:3001/auth/{{governance-id}}' \
 --header 'Content-Type: application/json' \
---data '["{{controller-id-Node1}}"]'
+--data '["{{controller-id-kore-example1}}"]'
 ```
 
 Ya está la gobernanza autorizada en el Nodo2, ahora podemos pedir la gobernanza de forma manual o esperar a que se emita otro evento en la gobernanza para recibir la copia y ahí actualizarnos de forma automática. Vamos a actualizarnos de forma manual ya que en este tutorial no vamos a emitir más eventos en la gobernanza.

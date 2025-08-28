@@ -14,8 +14,8 @@ enum Events {
 }
 
 #[unsafe(no_mangle)]
-pub unsafe fn main_function(state_ptr: i32, event_ptr: i32, is_owner: i32) -> u32 {
-    sdk::execute_contract(state_ptr, event_ptr, is_owner, contract_logic)
+pub unsafe fn main_function(state_ptr: i32, init_state_ptr: i32, event_ptr: i32, is_owner: i32) -> u32 {
+    sdk::execute_contract(state_ptr, init_state_ptr, event_ptr, is_owner, contract_logic)
 }
 
 #[unsafe(no_mangle)]
@@ -29,10 +29,10 @@ fn init_logic(_state: &Data, contract_result: &mut sdk::ContractInitCheck) {
 
 
 fn contract_logic(
-    context: &sdk::Context<Data, Events>,
+    context: &sdk::Context<Events>,
     contract_result: &mut sdk::ContractResult<Data>,
 ) {
-    let state = &mut contract_result.final_state;
+    let state = &mut contract_result.state;
     match context.event {
         Events::RegisterData {
             temperature,
@@ -56,7 +56,6 @@ fn test_change_data_fail1() {
     };
 
     let context = sdk::Context {
-        initial_state: init_state.clone(),
         event: Events::RegisterData {
             humidity: 255,
             temperature: -50_f32,
@@ -67,8 +66,8 @@ fn test_change_data_fail1() {
     let mut result = sdk::ContractResult::new(init_state);
     contract_logic(&context, &mut result);
 
-    assert_eq!(result.final_state.humidity, 0);
-    assert_eq!(result.final_state.temperature, 0_f32);
+    assert_eq!(result.state.humidity, 0);
+    assert_eq!(result.state.temperature, 0_f32);
 
     assert!(!result.success);
 }
@@ -81,7 +80,6 @@ fn test_change_data_fail2() {
     };
 
     let context = sdk::Context {
-        initial_state: init_state.clone(),
         event: Events::RegisterData {
             humidity: 55,
             temperature: 200_f32,
@@ -92,8 +90,8 @@ fn test_change_data_fail2() {
     let mut result = sdk::ContractResult::new(init_state);
     contract_logic(&context, &mut result);
 
-    assert_eq!(result.final_state.humidity, 0);
-    assert_eq!(result.final_state.temperature, 0_f32);
+    assert_eq!(result.state.humidity, 0);
+    assert_eq!(result.state.temperature, 0_f32);
 
     assert!(!result.success);
 }
@@ -106,7 +104,6 @@ fn test_change_data_fail3() {
     };
 
     let context = sdk::Context {
-        initial_state: init_state.clone(),
         event: Events::RegisterData {
             humidity: 150,
             temperature: -2_f32,
@@ -117,8 +114,8 @@ fn test_change_data_fail3() {
     let mut result = sdk::ContractResult::new(init_state);
     contract_logic(&context, &mut result);
 
-    assert_eq!(result.final_state.humidity, 0);
-    assert_eq!(result.final_state.temperature, 0_f32);
+    assert_eq!(result.state.humidity, 0);
+    assert_eq!(result.state.temperature, 0_f32);
 
     assert!(!result.success);
 }
@@ -131,7 +128,6 @@ fn test_change_data_ok1() {
     };
 
     let context = sdk::Context {
-        initial_state: init_state.clone(),
         event: Events::RegisterData {
             humidity: 55,
             temperature: -2_f32,
@@ -142,8 +138,8 @@ fn test_change_data_ok1() {
     let mut result = sdk::ContractResult::new(init_state);
     contract_logic(&context, &mut result);
 
-    assert_eq!(result.final_state.humidity, 55);
-    assert_eq!(result.final_state.temperature, -2_f32);
+    assert_eq!(result.state.humidity, 55);
+    assert_eq!(result.state.temperature, -2_f32);
 
     assert!(result.success);
 }
@@ -156,7 +152,6 @@ fn test_change_data_ok2() {
     };
 
     let context = sdk::Context {
-        initial_state: init_state.clone(),
         event: Events::RegisterData {
             humidity: 100,
             temperature: -20_f32,
@@ -167,8 +162,8 @@ fn test_change_data_ok2() {
     let mut result = sdk::ContractResult::new(init_state);
     contract_logic(&context, &mut result);
 
-    assert_eq!(result.final_state.humidity, 100);
-    assert_eq!(result.final_state.temperature, -20_f32);
+    assert_eq!(result.state.humidity, 100);
+    assert_eq!(result.state.temperature, -20_f32);
 
     assert!(result.success);
 }
@@ -181,7 +176,6 @@ fn test_change_data_ok3() {
     };
 
     let context = sdk::Context {
-        initial_state: init_state.clone(),
         event: Events::RegisterData {
             humidity: 0,
             temperature: 60_f32,
@@ -192,8 +186,8 @@ fn test_change_data_ok3() {
     let mut result = sdk::ContractResult::new(init_state);
     contract_logic(&context, &mut result);
 
-    assert_eq!(result.final_state.humidity, 0);
-    assert_eq!(result.final_state.temperature, 60_f32);
+    assert_eq!(result.state.humidity, 0);
+    assert_eq!(result.state.temperature, 60_f32);
 
     assert!(result.success);
 }
