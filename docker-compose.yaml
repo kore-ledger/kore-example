@@ -35,7 +35,7 @@ services:
           ipv4_address: 172.28.1.102
 
   kore-node:
-    image: koreledgerhub/kore-http:0.7.3-rockdb-prometheus-debug
+    image: koreledgerhub/kore-http:0.7.4-rocksdb-prometheus
     container_name: kore-example2
     ports:
       - "3001:3000"
@@ -47,9 +47,9 @@ services:
       KORE_PASSWORD: koreledger
       KORE_NETWORK_NODE_TYPE: Addressable
       KORE_NETWORK_LISTEN_ADDRESSES: /ip4/0.0.0.0/tcp/50000
-      KORE_NETWORK_ROUTING_ALLOW_LOCAL_ADDRESS_IN_DHT: true
+      KORE_NETWORK_ROUTING_ALLOW_PRIVATE_ADDRESS_IN_DHT: true
       KORE_NETWORK_BOOT_NODES: /dns4/kore-example1/tcp/50000/p2p/{{peer-id}}
-      KORE_BASE_SINK: kore-example:http://172.28.1.102:5050/sink/{{subject-id}}
+      KORE_SINK_SINKS: Sink1|kore-example|Fact|http://172.28.1.102:5050/sink/{{subject-id}}|false
     volumes:
       - ./kore_example2_db:/db
       - ./kore_example2_keys:/keys

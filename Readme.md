@@ -69,11 +69,11 @@ docker run --name kore-example1 -p 3000:3000 -p 50000:50000 -p 3050:3050 \
 -e KORE_PASSWORD=koreledger \
 -e KORE_NETWORK_NODE_TYPE=Bootstrap \
 -e KORE_NETWORK_LISTEN_ADDRESSES=/ip4/0.0.0.0/tcp/50000 \
--e KORE_NETWORK_ROUTING_ALLOW_LOCAL_ADDRESS_IN_DHT=true \
+-e KORE_NETWORK_ROUTING_ALLOW_PRIVATE_ADDRESS_IN_DHT=true \
 -v ./kore_example1_db:/db \
 -v ./kore_example1_keys:/keys \
 --network kore-example-network \
-koreledgerhub/kore-http:0.7.3-rockdb-prometheus-debug
+koreledgerhub/kore-http:0.7.4-sqlite-prometheus
 ```
 
 ## Nodo1 - Optener peer-id del nodo1:
@@ -93,11 +93,18 @@ Este peer-id se genera a partir de la clave pública del material criptográfico
 Vamos a desplegar en un docker-compose el otro nodo, un sumidero para este nodo (sumidero genérico que simplemente guarda en mongodb el evento que recibe) y un mongodb para guardar lo que pase por el sumidero. Se hace uso de un docker-compose por comodidad.
 Las variables a destacar del Nodo2 son dos:
 * KORE_NETWORK_ROUTING_BOOT_NODES: variable para indicar a que nodo bootstrap nos vamos a conectar para entrar a la red, cambie {{peer-id}} por el peer-id que le devolvió el Nodo1.
-* KORE_BASE_SINK: servicio que hará el papel de sumidero, se le indica el nombre del schema en este caso kore-example, y el end-point donde el nodo va a enviar la información. Esto quiere decir que para todos los eventos del schema kore-example en el caso de que sean eventos que hayan pasado todos los protocolos del nodo de forma satisfactoria serán enviados al sumidero. El nodo en tiempo de ejecución puede modificar dos variables del end-point tantas veces como aparezcan:
-    * {{subject-id}}: lo sustituirá por el subject-id del sujeto que esté enviando ese evento.
-    * {{schema-id}}: lo sustituirá por el schema del sujeto que esté enviando ese evento.
+* KORE_SINK_SINKS: servicios que harán el papel de sumidero, su estructura es la siguiente `nombre|schema-id|eventos|url|auth` donde:
+    - nombre: Es el nombre del servicio, puede ser cualquiera, es un nombre que se usa internamente para diferenciar los diferentes sumideros
+    - schema-id: Schema al cual vamos a escuchar sus eventos.
+    - eventos: Eventos que queremos recibir en nuestro sumidero, pueden ser `Create, Fact, Transfer, Confirm, Reject, EOL o ALL`, un sumidero puede escuchar todos los eventos con `ALL` o combinaciones de estos separandolos con un espacio por ejemplo `Create Fact EOL`.
+    - url: url del sumidero.
+    - auth: boleano, `true` si el sumidero requiere que el nodo utlice un token de autentificación, en el caso de que lo requiera la url del servicio de autentificación debe ser configurada en `KORE_SINK_AUTH`, se puede realizar el auth con un usuario `KORE_SINK_USERNAME` y una contraseña `KORE_SINK_PASSWORD`, la response de este servicio de autentificación debe venir en el estándar `OAuth 2.0 (RFC 6749/6750)`.
+
+El nodo en tiempo de ejecución puede modificar dos variables del end-point tantas veces como aparezcan:
+- {{subject-id}}: lo sustituirá por el subject-id del sujeto que esté enviando ese evento.
+- {{schema-id}}: lo sustituirá por el schema del sujeto que esté enviando ese evento.
     
-    Esto es así para permitir sumideros súper flexibles y genéricos. Tanto KORE_NETWORK_ROUTING_BOOT_NODES como KORE_BASE_SINK admiten vectores, por lo cual se puede configurar más de un bootstrap y más de un sumidero.
+Esto es así para permitir sumideros súper flexibles y genéricos. Tanto KORE_NETWORK_ROUTING_BOOT_NODES como KORE_SINK_SINKS admiten vectores, por lo cual se puede configurar más de un bootstrap y más de un sumidero.
 
 ## Nodo1 - Creación de la gobernanza:
 ```bash
